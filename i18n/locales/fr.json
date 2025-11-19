@@ -1,0 +1,157 @@
+{
+  "welcome": "Bienvenue",
+
+  "dashboard": {
+    "empty": "Aucun recrutement à afficher"
+  },
+
+  "errors": {
+    "fieldRequired": "Ce champ est requis",
+    "invalidEmail": "Adresse email invalide"
+  },
+
+  "sectors": {
+    "agriculture": "Agriculture",
+    "food_industry": "Industrie agroalimentaire",
+    "construction": "Construction",
+    "manufacturing": "Fabrication",
+    "energy": "Énergie",
+    "it_technology": "Technologies de l'information",
+    "telecommunications": "Télécommunications",
+    "finance_insurance": "Finance et assurances",
+    "real_estate": "Immobilier",
+    "wholesale_retail": "Commerce de gros et de détail",
+    "transport_logistics": "Transport et logistique",
+    "hospitality_tourism": "Hôtellerie et tourisme",
+    "healthcare": "Santé",
+    "education": "Éducation",
+    "public_administration": "Administration publique",
+    "research_development": "Recherche et développement",
+    "arts_entertainment": "Arts, culture et divertissement",
+    "environment": "Environnement",
+    "non_profit": "Organisations à but non lucratif",
+    "consulting_services": "Conseils et services aux entreprises"
+  },
+
+  "register": {
+    "goback": "Retour",
+
+    "login": {
+      "btn": "Se connecter"
+    },
+
+    "success": {
+      "title": "Compte créé avec succès ! Bienvenue sur Wink 🎉",
+      "description": "Gérez vos recrutements efficacement et commencez à trouver les meilleurs talents dès maintenant."
+    },
+
+    "errors": {
+      "userWithEmailAlreadyExists": "Un utilisateur avec cet adresse email existe déjà",
+      "global": "Nous avons rencontrer une erreur dans le traitement de la demande. Veuillez vérifier les informations saisies"
+    },
+
+    "one": {
+      "title": "Faisons connaissance",
+      "submit": "Continuer",
+
+      "items": {
+        "email": "Adresse mail",
+        "firstName": "Prénom",
+        "lastName": "Nom",
+
+        "password": {
+          "label": "Mot de passe",
+
+          "errors": {
+            "type": "Le mot de passe saisie est incorrecte"
+          }
+        },
+
+        "avatar": {
+          "label": "Photo de profil",
+          "add": "Ajouter une photo",
+          "update": "Modifier la photo",
+          "remove": "Suprimer",
+          "info": "au format *.png ou *.jpeg max 5mo",
+
+          "errors": {
+            "type": "Veuillez sélectionner un fichier JPEG ou PNG.",
+            "size": "Taille maximale dépassé. MAximum 5mo"
+          }
+        }
+      }
+    },
+
+    "two": {
+      "title": "Créez votre espace",
+      "submit": "Continuer",
+      "items": {
+        "name": {
+          "label": "Nom de l'entreprise",
+          "placeholder": "Renseignez le nom de votre entreprise"
+        },
+
+        "description": {
+          "label": "Description de l’entreprise",
+          "placeholder": "Décrivez votre entreprise brièvement :\n * Histoire et chiffres clés\n  * Produits ou services commercialisés\n  * Culture et valeurs"
+        },
+
+        "website": {
+          "label": "Site internet",
+          "placeholder": "votre-entreprise.com",
+          "errors": {
+            "type": "L'url saisie est invalide"
+          }
+        },
+
+        "address": {
+          "label": "Adresse du siège social",
+          "placeholder": "Renseignez l'adresse de votre entreprise"
+        },
+
+        "sector": {
+          "label": "Secteur d’activité",
+          "placeholder": "Renseignez le secteur d’activité de votre entreprise"
+        },
+
+        "logo": {
+          "label": "Logo de l'entreprise",
+          "add": "Ajouter une photo",
+          "update": "Modifier la photo",
+          "remove": "Suprimer",
+          "info": "au format *.png ou *.jpeg",
+
+          "errors": {
+            "type": "Veuillez sélectionner un fichier JPEG ou PNG.",
+            "size": "Taille maximale dépassé. MAximum 5mo"
+          }
+        }
+      }
+    },
+
+    "three": {
+      "title": "Pour mieux vous connaître"
+    }
+  },
+
+  "login": {
+    "title": "Bienvenue sur Wink",
+    "description": "Saisissez vos identifiants pour accéder à votre compte.",
+    "submit": "Se connecter",
+
+    "errors": {
+      "invalidCredentials": "Les identifiants saisies sont incorrectes",
+      "global": "Nous avons rencontrer une erreur dans le traitement de la demande. Veuillez vérifier les informations saisies"
+    },
+
+    "register": {
+      "text": "Vous n'avez pas de compte ?",
+      "btn": "S'inscrire"
+    },
+
+    "items": {
+      "email": "Adresse mail",
+      "password": "Mot de passe"
+    }
+  }
+}
