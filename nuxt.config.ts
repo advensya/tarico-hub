@@ -25,7 +25,7 @@ export default defineNuxtConfig({
     public: {},
   },
 
-  components: [{ path: "~/components", global: true, prefix: "wk" }],
+  components: [{ path: "~/components/ui", global: true, prefix: "ui" }],
   css: ["~/assets/css/main.css"],
 
   routeRules: {
@@ -46,7 +46,7 @@ export default defineNuxtConfig({
   icon: {
     customCollections: [
       {
-        prefix: "wink",
+        prefix: "tarico",
         dir: "./app/assets/icons",
       },
     ],
@@ -54,7 +54,6 @@ export default defineNuxtConfig({
 
   i18n: {
     defaultLocale: "fr",
-    // customRoutes: 'page',
     strategy: "no_prefix",
 
     locales: [
@@ -65,9 +64,5 @@ export default defineNuxtConfig({
     ],
   },
 
-  nitro: {
-    alias: {
-      "pg-native": "./empty.js",
-    },
-  },
+  nitro: {},
 });

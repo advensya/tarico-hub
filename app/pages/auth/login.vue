@@ -11,30 +11,20 @@ const fields: AuthFormField[] = [
     name: "email",
     type: "email",
     label: $i18n.t("login.items.email"),
+    size: "lg",
     required: true,
   },
   {
     name: "password",
     type: "password",
     label: $i18n.t("login.items.password"),
+    size: "lg",
     required: true,
   },
-];
-
-const providers = [
   {
-    label: "Google",
-    icon: "i-simple-icons-google",
-    onClick: () => {
-      toast.add({ title: "Google", description: "Login with Google" });
-    },
-  },
-  {
-    label: "GitHub",
-    icon: "i-simple-icons-github",
-    onClick: () => {
-      toast.add({ title: "GitHub", description: "Login with GitHub" });
-    },
+    name: "keepAlive",
+    label: $i18n.t("login.items.keepAlive"),
+    type: "checkbox",
   },
 ];
 
@@ -198,21 +188,32 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
   <div class="flex w-full h-screen rounded-0" variant="ghost">
     <div class="hidden lg:block w-6/12">
       <div class="p-10">
-        <wk-logo class="h-8" />
+        <wk-logo class="h-8 text-primary" />
       </div>
     </div>
 
     <div class="lg:w-6/12 w-full sticky top-0">
-      <UPageCard variant="ghost" class="w-full max-w-md mx-auto mt-36">
+      <UPageCard class="w-full max-w-md mx-auto mt-36 rounded-2xl py-5">
         <UAuthForm
           :schema="schema"
           :title="$t('login.title')"
           :description="$t('login.description')"
           :fields="fields"
-          :providers="providers"
           :loading="submiting"
+          :submit="{
+            label: $t('login.submit'),
+            variant: 'solid',
+            size: 'xl',
+            class: 'cursor-pointer',
+          }"
           @submit="onSubmit"
         >
+          <template #password-hint>
+            <ULink to="#" class="text-primary font-medium" tabindex="-1">
+              {{ $t("login.forgetPassword") }}
+            </ULink>
+          </template>
+
           <template #footer>
             {{ $t("login.register.text") }}
             <ULink

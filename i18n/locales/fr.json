@@ -135,7 +135,7 @@
   },
 
   "login": {
-    "title": "Bienvenue sur Wink",
+    "title": "Bienvenue sur Tarico",
     "description": "Saisissez vos identifiants pour accéder à votre compte.",
     "submit": "Se connecter",
 
@@ -149,9 +149,12 @@
       "btn": "S'inscrire"
     },
 
+    "forgetPassword": "Mot de passe oublié ?",
+
     "items": {
       "email": "Adresse mail",
-      "password": "Mot de passe"
+      "password": "Mot de passe",
+      "keepAlive": "Garder ma session active"
     }
   }
 }

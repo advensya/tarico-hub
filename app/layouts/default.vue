@@ -47,7 +47,6 @@ const head = useLocaleHead({
 
     <Body>
       <UApp>
-        <!-- <wk-header /> -->
         <UMain>
           <slot />
         </UMain>
@@ -56,14 +55,14 @@ const head = useLocaleHead({
           <UDropdownMenu
             :items="[
               [...getThemeItems(), getLangItems()],
-              [
-                {
-                  label: 'GitHub repository',
-                  icon: 'i-simple-icons-github',
-                  to: 'https://github.com/domutala/wink-bnj',
-                  target: '_blank',
-                },
-              ],
+              // [
+              //   {
+              //     label: 'GitHub repository',
+              //     icon: 'i-simple-icons-github',
+              //     to: 'https://github.com/domutala/wink-bnj',
+              //     target: '_blank',
+              //   },
+              // ],
             ]"
             :content="{ align: 'start', collisionPadding: 12 }"
           >

@@ -42,41 +42,11 @@ const isCollapse = ref(true);
       :default-size="20"
       :ui="{ footer: 'border-t border-default' }"
     >
-      <template #header="{ collapsed }"> </template>
+      <template #header="{ collapsed }">
+        <UIcon name="i-tarico-logo" size="32" color="primary" />
+      </template>
 
       <template #default="{ collapsed }">
-        <UButton
-          v-bind="{
-            label: collapsed ? undefined : Store.auth.auth?.company?.name,
-            trailingIcon: collapsed ? undefined : 'i-lucide-chevrons-up-down',
-          }"
-          color="neutral"
-          :variant="collapsed ? 'ghost' : 'outline'"
-          :size="'xl'"
-          block
-          :square="collapsed"
-          class="data-[state=open]:bg-elevated"
-          :ui="{
-            trailingIcon: 'text-dimmed rounded',
-          }"
-        >
-          <template #leading>
-            <UAvatar
-              class="rounded-lg"
-              :src="
-                Store.auth.auth?.company?.logo
-                  ? Store.auth.auth?.company?.logo
-                  : undefined
-              "
-              :alt="
-                Store.auth.auth?.company?.name
-                  ? Store.auth.auth?.company?.name
-                  : undefined
-              "
-            />
-          </template>
-        </UButton>
-
         <UNavigationMenu
           :collapsed="collapsed"
           :items="navbarItems[0]"
@@ -96,7 +66,7 @@ const isCollapse = ref(true);
 
     <UDashboardPanel resizable>
       <template #header>
-        <UDashboardNavbar>
+        <UDashboardNavbar class="h-[46px]">
           <template #leading>
             <UDashboardSidebarCollapse />
           </template>
