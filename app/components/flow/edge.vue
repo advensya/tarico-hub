@@ -7,8 +7,9 @@ import {
   getBezierPath,
   useVueFlow,
 } from "@vue-flow/core";
+import type { Flow, FlowData } from "./interface";
 
-const props = defineProps<EdgeProps>();
+const props = defineProps<EdgeProps & { flow: Flow; flowData?: FlowData }>();
 
 const { removeEdges } = useVueFlow();
 
@@ -34,6 +35,7 @@ export default {
       class="nodrag nopan"
     >
       <u-button
+        v-if="!flowData"
         size="xs"
         icon="i-lucide-trash-2"
         class="rounded-full cursor-pointer"

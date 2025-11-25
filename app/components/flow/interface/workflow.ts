@@ -1,5 +1,3 @@
-import type { IFlowState } from ".";
-
 /**
  * 1. Interface de Transition (L'Arête / L'Événement)
  * Décrit les actions possibles pour un état donné.
@@ -15,6 +13,8 @@ export interface TransitionMap {
  * Contient toutes les propriétés d'un état (nœud) dans le workflow.
  */
 export interface StateDefinition {
+  id: string;
+
   /** Nom logique de l'état (ex: 'pending', 'draft'). */
   name: string;
 

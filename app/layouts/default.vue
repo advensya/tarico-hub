@@ -51,19 +51,12 @@ const head = useLocaleHead({
           <slot />
         </UMain>
 
-        <div v-if="!Store.auth.auth" class="fixed bottom-10 left-10 z-50">
+        <div
+          v-if="!Store.auth.auth"
+          class="fixed bottom-10 left-10 z-50 hidden"
+        >
           <UDropdownMenu
-            :items="[
-              [...getThemeItems(), getLangItems()],
-              // [
-              //   {
-              //     label: 'GitHub repository',
-              //     icon: 'i-simple-icons-github',
-              //     to: 'https://github.com/domutala/wink-bnj',
-              //     target: '_blank',
-              //   },
-              // ],
-            ]"
+            :items="[[...getThemeItems(), getLangItems()]]"
             :content="{ align: 'start', collisionPadding: 12 }"
           >
             <UButton

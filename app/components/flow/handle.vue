@@ -44,7 +44,7 @@ const isLink = computed(() => {
         ? 'bg-primary!'
         : 'bg-transparent! hover:bg-primary-50!',
     ]"
-    class="border-transparent! w-2! h-2!"
+    class="border-transparent! w-2! h-2! rounded-full"
   >
   </Handle>
 </template>

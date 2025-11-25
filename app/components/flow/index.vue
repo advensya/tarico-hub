@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import * as _ from "lodash";
 import { Background } from "@vue-flow/background";
 import { Controls } from "@vue-flow/controls";
 import { MiniMap } from "@vue-flow/minimap";
@@ -20,13 +21,19 @@ import UiNodeClose from "~/components/flow/node/close.vue";
 
 import CustomEdge from "~/components/flow/edge.vue";
 import {
+  type Flow,
+  type FlowData,
   type IFlowConnecting,
   type IFlowState,
   flowStates,
 } from "./interface/index";
 
-import defaultFlow from "./default";
 import { WorkflowParser } from "./utils/parser";
+
+const props = defineProps({
+  data: { type: Object as PropType<FlowData> },
+  flow: { type: Object as PropType<Flow>, required: true },
+});
 
 const {
   onConnect,
@@ -35,36 +42,20 @@ const {
   getNodes,
   getHandleConnections,
   toObject,
+  onInit,
+  fitView,
+  zoomIn,
+  zoomOut,
 } = useVueFlow();
-
-const nodes = ref<Node[]>([
-  // {
-  //   id: "start",
-  //   type: "custom",
-  //   label: "Node 1",
-  //   position: { x: 250, y: 5 },
-  //   data: { type: "start" },
-  // },
-  // {
-  //   id: "2",
-  //   type: "custom",
-  //   label: "Node 3",
-  //   position: { x: 700, y: 5 },
-  //   data: {},
-  // },
-  // {
-  //   id: "end",
-  //   type: "custom",
-  //   label: "Node 3",
-  //   position: { x: 1150, y: 5 },
-  //   data: { type: "end" },
-  // },
-  ...defaultFlow.nodes,
-]);
-
+const _flow = ref<Flow>(_.cloneDeep(props.flow));
 const connecting = ref<IFlowConnecting>();
+const inited = ref(false);
 
-const edges = ref<Edge[]>([...defaultFlow.edges]);
+onInit((v) => {
+  setTimeout(() => {
+    inited.value = true;
+  }, 500);
+});
 
 onConnect((params) => {
   const e = [
@@ -152,8 +143,53 @@ function onConnectEnd() {
 
 // NestJS Service / Parser
 function parseVueFlow(flowData: FlowExportObject) {
+  console.log(flowData);
+
   const parser = new WorkflowParser();
   console.log(parser.parseVueFlow(flowData));
+}
+
+function compareFlowData(
+  o: { nodes: Node[]; edges: Edge[] },
+  n: { nodes: Node[]; edges: Edge[] }
+) {
+  const compareArraysByPaths = <T extends object>(
+    arrA: T[],
+    arrB: T[],
+    paths: string[]
+  ): boolean => {
+    if (arrA.length !== arrB.length) return false;
+
+    for (let i = 0; i < arrA.length; i++) {
+      const a = arrA[i];
+      const b = arrB[i];
+
+      const same = paths.every((path) =>
+        _.isEqual(_.pick(a, path), _.pick(b, path))
+      );
+
+      if (!same) return false;
+    }
+
+    return true;
+  };
+
+  const nodeKeys = ["id", "type", "position", "data"];
+  const isNode = compareArraysByPaths(o.nodes, n.nodes, nodeKeys);
+
+  const edgeKeys = [
+    "id",
+    "type",
+    "source",
+    "target",
+    "sourceHandle",
+    "targetHandle",
+    "data",
+    "animated",
+  ];
+  const isEdge = compareArraysByPaths(o.edges, n.edges, edgeKeys);
+
+  return isNode && isEdge;
 }
 </script>
 
@@ -161,8 +197,8 @@ function parseVueFlow(flowData: FlowExportObject) {
   <div class="w-screen h-screen">
     <div class="flex h-full">
       <VueFlow
-        v-model:nodes="nodes"
-        v-model:edges="edges"
+        v-model:nodes="_flow.nodes"
+        v-model:edges="_flow.edges"
         fit-view-on-init
         :default-zoom="1.5"
         :min-zoom="0.2"
@@ -174,7 +210,62 @@ function parseVueFlow(flowData: FlowExportObject) {
 
         <MiniMap />
 
-        <Controls />
+        <div class="absolute bottom-5 left-5 z-50 flex flex-col gap-1">
+          <ui-undo-redo
+            v-if="inited"
+            v-model="_flow"
+            :compare="compareFlowData"
+          >
+            <template #default="{ canUndo, canRedo, undo, redo }">
+              <u-button
+                icon="i-lucide-undo-2"
+                color="neutral"
+                variant="soft"
+                class="cursor-pointer"
+                :disabled="!canUndo"
+                @click="undo"
+              >
+              </u-button>
+              <u-button
+                color="neutral"
+                variant="soft"
+                icon="i-lucide-redo-2"
+                class="cursor-pointer"
+                :disabled="!canRedo"
+                @click="redo"
+              >
+              </u-button>
+            </template>
+          </ui-undo-redo>
+
+          <u-button
+            icon="i-lucide-plus"
+            color="neutral"
+            variant="soft"
+            class="cursor-pointer"
+            @click="zoomIn()"
+          />
+
+          <u-button
+            icon="i-lucide-minus"
+            color="neutral"
+            variant="soft"
+            class="cursor-pointer"
+            @click="zoomOut()"
+          />
+
+          <u-button
+            icon="i-lucide-scan"
+            color="neutral"
+            variant="soft"
+            class="cursor-pointer"
+            @click="fitView()"
+          />
+        </div>
+
+        <!-- <Controls>
+          <template #></template>
+        </Controls> -->
 
         <svg>
           <defs>
@@ -192,15 +283,6 @@ function parseVueFlow(flowData: FlowExportObject) {
           </defs>
         </svg>
 
-        <!-- <template #connection-line="{ sourceX, sourceY, targetX, targetY }">
-          <UiArrow
-            :source-x="sourceX"
-            :source-y="sourceY"
-            :target-x="targetX"
-            :target-y="targetY"
-          />
-        </template> -->
-
         <template #node-custom="props">
           <component
             v-bind="props"
@@ -215,12 +297,13 @@ function parseVueFlow(flowData: FlowExportObject) {
             "
             :is-valid-connection="isHandleAcceptConnection"
             :connecting
-            :edges
+            :flow="_flow"
+            :flow-data="data"
           />
         </template>
 
         <template #edge-default="props">
-          <CustomEdge v-bind="props" />
+          <CustomEdge v-bind="props" :flow="_flow" :flow-data="data" />
         </template>
       </VueFlow>
 
@@ -238,33 +321,11 @@ function parseVueFlow(flowData: FlowExportObject) {
                   createNewNode({ state: e });
                 },
               })),
-              // {
-              //   label: 'cancel',
-              //   onSelect: (e) => {
-              //     createNewNode({ state: 'cancel' });
-              //   },
-              // },
-              // {
-              //   label: 'pending',
-              //   onSelect: (e) => {
-              //     createNewNode({ state: 'pending' });
-              //   },
-              // },
             ],
           ]"
           :content="{ align: 'start', collisionPadding: 12 }"
         >
           <u-button> <span class="icon">+</span> Ajouter une étape </u-button>
-
-          <!-- <UButton
-            icon="i-lucide-swatch-book"
-            color="primary"
-            variant="soft"
-            size="xl"
-            square
-            aria-label="Color picker"
-            class="cursor-pointer"
-          /> -->
         </UDropdownMenu>
       </div>
     </div>

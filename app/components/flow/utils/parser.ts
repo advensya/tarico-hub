@@ -1,33 +1,24 @@
-import type { FlowExportObject } from "@vue-flow/core";
-import type {
-  StateDefinition,
-  WorkflowDefinition,
-} from "../interface/workflow";
+import type { StateDefinition } from "../interface/workflow.ts";
+import type { Flow } from "../interface/index.ts";
 
 export class WorkflowParser {
   /**
    * Génère un nom d'événement conventionnel pour une arête.
    * Si edge.label est vide, génère ACTION_TO_STATE.
    */
-  private generateEventName(
-    targetStateName: string,
-    customLabel?: string
-  ): string {
+  private generateEventName(targetStateName: string, customLabel?: string) {
     // Si l'utilisateur a renseigné un label, on le priorise.
-    if (customLabel && customLabel.trim() !== "") {
-      return customLabel.trim().toUpperCase().replace(/\s/g, "_");
-    }
+    // if (customLabel && customLabel.trim() !== "") {
+    //   return customLabel.trim().toUpperCase().replace(/\s/g, "_");
+    // }
     // Sinon, on crée un événement par convention
-    return `ACTION_TO_${targetStateName.toUpperCase()}`;
+    return `${targetStateName}`;
   }
 
   /**
    * Convertit le JSON de Vue Flow en une définition de workflow exécutable.
    */
-  public parseVueFlow(
-    flowData: FlowExportObject,
-    version = 1
-  ): WorkflowDefinition {
+  public parseVueFlow(flowData: Flow) {
     const states: Record<string, StateDefinition> = {};
     const nodeMap = new Map(flowData.nodes.map((node) => [node.id, node]));
 
@@ -36,6 +27,7 @@ export class WorkflowParser {
       const stateName = node.data.state;
 
       states[node.id] = {
+        id: node.id,
         name: node.data.label || stateName, // Utiliser le label visuel si disponible
         type: node.data.type,
         on: {}, // Initialisation de la map de transitions
@@ -76,12 +68,6 @@ export class WorkflowParser {
       );
     }
 
-    return {
-      id: Date.now().toString(),
-      initialStateId: "start",
-      name: "main",
-      states,
-      version,
-    };
+    return states;
   }
 }
