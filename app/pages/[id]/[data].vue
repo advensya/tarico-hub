@@ -1,11 +1,14 @@
 <script lang="ts" setup>
-import type { Flow } from "~/components/flow/interface";
+import type { FlowData, Flow } from "~/components/flow/interface";
+import UiFlow from "~/components/flow/index.vue";
+
+defineProps<{ flow: Flow }>();
 
 const {
-  data: flow,
+  data,
   pending: fetching,
   refresh,
-} = await useFetch<Flow>(`/api/flow/${Use.route.params.id}`, {
+} = await useFetch<FlowData>(`/api/data/${Use.route.params.data}`, {
   method: "get",
 });
 </script>
@@ -18,5 +21,5 @@ const {
     <u-icon name="i-line-md-loading-twotone-loop" size="42" />
   </div>
 
-  <nuxt-page v-else-if="flow" :flow />
+  <ui-flow v-else-if="data" :flow :data> </ui-flow>
 </template>

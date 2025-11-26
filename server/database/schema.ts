@@ -7,6 +7,7 @@ import {
   boolean,
   text,
   jsonb,
+  integer,
 } from "drizzle-orm/pg-core";
 
 export const company = pgTable("company", {
@@ -42,9 +43,26 @@ export const flow = pgTable("flow", {
   id: uuid().primaryKey().defaultRandom(),
   name: varchar().notNull(),
   data: jsonb().$type<OneFlow[]>().notNull(),
-  createdAt: timestamp().defaultNow().notNull(),
+  createdAt: timestamp("createdAt", { mode: "string" }).defaultNow().notNull(),
+});
+
+export const data = pgTable("data", {
+  id: uuid().primaryKey().defaultRandom(),
+  version: integer().notNull().default(1),
+  files: jsonb()
+    .$type<{ [state: string]: string[] }>()
+    .notNull()
+    .array()
+    .default([]),
+  state: varchar(),
+  name: varchar().notNull(),
+  createdAt: timestamp("createdAt", { mode: "string" }).defaultNow().notNull(),
+  flowID: uuid("flowID")
+    .references(() => flow.id)
+    .notNull(),
 });
 
 export type User = typeof tables.user.$inferSelect;
 export type Company = typeof tables.company.$inferSelect;
 export type Flow = typeof tables.flow.$inferSelect;
+export type Data = typeof tables.data.$inferSelect;

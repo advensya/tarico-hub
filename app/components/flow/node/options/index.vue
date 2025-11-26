@@ -24,6 +24,32 @@ const open = ref({
 const actions = computed(() => {
   const items: DropdownMenuItem[] = [];
 
+  if (props.flowData?.files?.length) {
+    const files = props.flowData.files.filter(
+      (file) => file.state === props.id
+    );
+
+    if (files.length) {
+      const fileItems: DropdownMenuItem[] = [];
+
+      for (const file of props.flowData.files) {
+        fileItems.push({
+          label: file.name,
+          // icon: "i-lucide-upload",
+          class: "cursor-pointer",
+          onSelect: () => {},
+        });
+      }
+
+      items.push({
+        label: "Fichiers",
+        icon: "i-lucide-file-text",
+        class: "cursor-pointer",
+        children: fileItems,
+      });
+    }
+  }
+
   if (props.flowData?.state === props.id) {
     const parser = new WorkflowParser();
     const states = parser.parseVueFlow(props.flow);
@@ -33,7 +59,7 @@ const actions = computed(() => {
     if (stateNode && state) {
       if (stateNode.data?.state === "pending") {
         items.push({
-          label: "upload",
+          label: "Charger un fichier",
           icon: "i-lucide-upload",
           class: "cursor-pointer",
           onSelect: () => {
@@ -44,8 +70,10 @@ const actions = computed(() => {
 
       for (const key of Object.keys(stateIcons)) {
         if (Object.keys(state.on).includes(key)) {
+          const nextState = states[state.on[key]!];
+
           items.push({
-            label: key,
+            label: `Passer à l'étape: ${nextState?.name}`,
             icon: stateIcons[key as "pending"],
             class: "cursor-pointer",
             onSelect: () => {

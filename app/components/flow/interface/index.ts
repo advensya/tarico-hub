@@ -23,8 +23,12 @@ export const flowStates = [
 export type IFlowState = (typeof flowStates)[number];
 
 export interface FlowData {
+  id: string;
   state: string;
   version: number;
+  files: any[];
+  name: string;
+  flowID: string;
   [key: string]: any;
 }
 

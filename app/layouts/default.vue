@@ -21,6 +21,7 @@ const head = useLocaleHead({
 
         <slot />
       </u-layout>
+      <NuxtLoadingIndicator />
       <!-- <UApp>
         <UMain>
           <slot />

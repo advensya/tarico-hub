@@ -37,14 +37,13 @@ const isCollapse = ref(true);
 <template>
   <UDashboardGroup>
     <UDashboardSidebar
-      v-if="Store.auth.auth"
       v-model:collapsed="isCollapse"
       :default-size="20"
       :ui="{ footer: 'border-t border-default' }"
       collapsible
     >
       <template #header="{ collapsed }">
-        <UIcon name="i-tarico-logo" size="32" color="primary" />
+        <UiLogo class="w-64" />
       </template>
 
       <template #default="{ collapsed }">
@@ -61,7 +60,7 @@ const isCollapse = ref(true);
           class="mt-auto"
         />
 
-        <WkUserMenu :collapsed="collapsed" />
+        <!-- <WkUserMenu :collapsed="collapsed" /> -->
 
         <div>
           <UDashboardSidebarCollapse />

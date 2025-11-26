@@ -21,7 +21,7 @@ function addNode() {
         'rounded-l-4xl': data.type === 'initial',
         'rounded-r-4xl': data.type === 'final',
         'border-primary! shadow-xl!': selected,
-        'border-warning border-dashed': flowData?.state === id,
+        'border-warning  bg-warning-950': flowData?.state === id,
       }"
     >
       <template v-if="data.type !== 'initial'">

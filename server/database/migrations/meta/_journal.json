@@ -22,6 +22,41 @@
       "when": 1764125662897,
       "tag": "0002_modern_frog_thor",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1764134760365,
+      "tag": "0003_jittery_maria_hill",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1764135452583,
+      "tag": "0004_many_blink",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1764140846588,
+      "tag": "0005_mute_exiles",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1764141092784,
+      "tag": "0006_cold_leopardon",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1764141340531,
+      "tag": "0007_milky_roland_deschain",
+      "breakpoints": true
     }
   ]
 }

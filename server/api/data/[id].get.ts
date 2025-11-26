@@ -4,10 +4,10 @@ import { eq } from "drizzle-orm";
 export default defineEventHandler(async (event) => {
   const id = getRouterParam(event, "id") as string;
 
-  const flows = await dataSource
+  const datas = await dataSource
     .select()
-    .from(tables.flow)
-    .where(eq(tables.flow.id, id));
+    .from(tables.data)
+    .where(eq(tables.data.id, id));
 
-  return flows[0];
+  return datas[0];
 });

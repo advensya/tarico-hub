@@ -18,6 +18,7 @@ import UiNodePending from "~/components/flow/node/pending.vue";
 import UiNodeDraft from "~/components/flow/node/draft.vue";
 import UiNodeCancel from "~/components/flow/node/cancel.vue";
 import UiNodeClose from "~/components/flow/node/close.vue";
+import UiDataList from "~/components/flow/data/list.vue";
 
 import CustomEdge from "~/components/flow/edge.vue";
 import {
@@ -31,7 +32,8 @@ import {
 
 import { WorkflowParser } from "./utils/parser";
 import { oneFlow } from "./default";
-import { getLatestVersion } from "~/tools/flow";
+import { getLatestVersion, getVersion } from "~/tools/flow";
+import type { BreadcrumbItem, FormSubmitEvent } from "@nuxt/ui";
 
 const props = defineProps({
   data: { type: Object as PropType<FlowData> },
@@ -51,11 +53,44 @@ const {
   zoomOut,
 } = useVueFlow();
 
-const _flow = ref<Flow | undefined>(_.cloneDeep(props.flow));
-const version = ref<OneFlow>(getLatestVersion(props.flow) || oneFlow);
+const _data = ref<FlowData>();
+const _flow = ref<Flow>();
+const name = ref<string>();
+const version = ref<OneFlow>();
 
 const connecting = ref<IFlowConnecting>();
 const inited = ref(false);
+
+onMounted(() => {
+  _data.value = _.cloneDeep(props.data);
+  _flow.value = _.cloneDeep(props.flow);
+  name.value = _flow.value?.name;
+
+  version.value =
+    (_flow.value && _data.value
+      ? getVersion(_flow.value, _data.value.version)
+      : getLatestVersion(_flow.value)) || oneFlow;
+
+  Utils.event.on("data:update", (e: any) => {
+    _data.value = e;
+  });
+});
+
+const breakcrumbs = computed(() => {
+  const breakcrumbs: BreadcrumbItem[] = [
+    {
+      active: false,
+      label: name.value || "Nouveau workflow",
+      to: _flow.value
+        ? { name: "id", params: { id: _flow.value.id } }
+        : undefined,
+    },
+  ];
+
+  if (_data.value) breakcrumbs.push({ active: false, label: _data.value.name });
+
+  return breakcrumbs;
+});
 
 onInit((v) => {
   setTimeout(() => {
@@ -147,34 +182,6 @@ function onConnectEnd() {
   connecting.value = undefined;
 }
 
-const saving = ref(false);
-async function save() {
-  // const parser = new WorkflowParser();
-  saving.value = true;
-  try {
-    const newVersion = _.cloneDeep(version.value);
-    newVersion.version++;
-    newVersion.createdAt = new Date();
-
-    let body = { data: [newVersion] };
-    if (_flow.value) {
-      const flow = _.cloneDeep(_flow.value);
-      flow.data.push(newVersion);
-      body = flow;
-    }
-
-    const r = await $fetch("/api/flow/create", {
-      method: "post",
-      body,
-    });
-
-    _flow.value = r as any;
-  } catch (error) {
-  } finally {
-    saving.value = false;
-  }
-}
-
 function compareFlowData(
   o: { nodes: Node[]; edges: Edge[] },
   n: { nodes: Node[]; edges: Edge[] }
@@ -217,12 +224,72 @@ function compareFlowData(
 
   return isNode && isEdge;
 }
+
+const saving = ref(false);
+async function save() {
+  if (!version.value) return;
+
+  const parser = new WorkflowParser();
+  saving.value = true;
+  try {
+    const newVersion = _.cloneDeep(version.value);
+    newVersion.version++;
+    newVersion.createdAt = new Date();
+
+    let body = { data: [newVersion], name: name.value };
+    if (_flow.value) {
+      const flow = _.cloneDeep(_flow.value);
+      flow.data.push(newVersion);
+      body = flow;
+    }
+
+    body.name = name.value || "Nouveau workflow";
+
+    const r = await $fetch("/api/flow/create", {
+      method: "post",
+      body,
+    });
+
+    _flow.value = r as any;
+  } catch (error) {
+  } finally {
+    saving.value = false;
+  }
+}
+
+const newDataing = ref(false);
+async function newData() {
+  if (!_flow.value?.id) return;
+
+  try {
+    newDataing.value = true;
+    const latestVersion = getLatestVersion(_flow.value);
+
+    const data = await $fetch("/api/data", {
+      method: "post",
+      body: {
+        state: latestVersion?.nodes.find((n) => n.data.state === "draft")?.id,
+        flowID: _flow.value.id,
+        version: latestVersion?.version,
+        name: `${Math.random().toString().substring(2, 8)} - ${
+          _flow.value.name
+        }`,
+      },
+    });
+
+    Use.router.push({ name: "id-data", params: { data: data.id } });
+  } catch (error) {
+  } finally {
+    newDataing.value = false;
+  }
+}
 </script>
 
 <template>
   <div class="w-full h-full">
     <div class="flex h-full">
       <VueFlow
+        v-if="version"
         v-model:nodes="version.nodes"
         v-model:edges="version.edges"
         fit-view-on-init
@@ -245,11 +312,110 @@ function compareFlowData(
     :pan-on-drag="false"
      -->
 
-        <MiniMap />
+        <MiniMap :position="'bottom-left'" />
 
-        <div class="absolute bottom-5 left-5 z-50 flex flex-col gap-1">
+        <div class="ui-flow-toolbar absolute top-6 left-10 z-50">
+          <div class="flex items-center gap-2">
+            <UBreadcrumb :items="breakcrumbs" />
+            <UModal
+              v-if="!_data"
+              :title="'Nom du workflow'"
+              :close="{
+                color: 'neutral',
+                variant: 'soft',
+                class: 'cursor-pointer',
+                icon: '',
+                size: 'sm',
+                label: 'Terminer',
+              }"
+            >
+              <u-button
+                icon="i-lucide-pen"
+                size="xs"
+                color="neutral"
+                variant="ghost"
+                class="cursor-pointer"
+              ></u-button>
+
+              <template #body>
+                <div class="p-5">
+                  <UInput v-model="name" class="w-full" size="xl" />
+                </div>
+              </template>
+            </UModal>
+          </div>
+        </div>
+
+        <div class="absolute flex flex-col gap-2 items-end top-6 right-8 z-50">
+          <template v-if="!_data">
+            <u-button
+              :loading="saving"
+              color="neutral"
+              variant="soft"
+              class="cursor-pointer"
+              @click="save()"
+            >
+              Enrefistrer
+            </u-button>
+
+            <u-button
+              v-if="_flow?.id"
+              :loading="newDataing"
+              color="neutral"
+              variant="soft"
+              class="cursor-pointer"
+              icon="i-lucide-plus"
+              @click="newData"
+            >
+              Nouveau process
+            </u-button>
+
+            <ui-data-list v-if="_flow?.id" :flow-id="_flow.id">
+              <template #activator>
+                <UButton
+                  label=" Liste des process"
+                  color="neutral"
+                  variant="soft"
+                  icon="i-lucide-list-collapse"
+                  class="cursor-pointer"
+                />
+              </template>
+            </ui-data-list>
+
+            <u-button
+              color="error"
+              variant="soft"
+              class="cursor-pointer"
+              icon="i-lucide-trash-2"
+            >
+              Supprimer
+            </u-button>
+          </template>
+
+          <template v-else>
+            <u-button
+              color="neutral"
+              variant="soft"
+              class="cursor-pointer"
+              icon="i-lucide-message-square-text"
+            >
+              Commentaire
+            </u-button>
+
+            <u-button
+              color="error"
+              variant="soft"
+              class="cursor-pointer"
+              icon="i-lucide-trash-2"
+            >
+              Supprimer
+            </u-button>
+          </template>
+        </div>
+
+        <div class="absolute bottom-10 right-8 z-50 flex flex-col gap-1">
           <UDropdownMenu
-            v-if="!data"
+            v-if="!_data"
             :items="[
               [
                 ...flowStates.values().map((e) => ({
@@ -271,7 +437,7 @@ function compareFlowData(
           </UDropdownMenu>
 
           <ui-undo-redo
-            v-if="inited && !data"
+            v-if="inited && !_data"
             v-model="version"
             :compare="compareFlowData"
           >
@@ -342,35 +508,29 @@ function compareFlowData(
           </defs>
         </svg>
 
-        <template #node-custom="props">
+        <template #node-custom="nodeProps">
           <component
-            v-bind="props"
+            v-bind="nodeProps"
             :is="
-              props.data.state === 'draft'
+              nodeProps.data.state === 'draft'
                 ? UiNodeDraft
-                : props.data.state === 'cancel'
+                : nodeProps.data.state === 'cancel'
                 ? UiNodeCancel
-                : props.data.state === 'close'
+                : nodeProps.data.state === 'close'
                 ? UiNodeClose
                 : UiNodePending
             "
             :is-valid-connection="isHandleAcceptConnection"
             :connecting
             :flow="version"
-            :flow-data="data"
+            :flow-data="_data"
           />
         </template>
 
         <template #edge-default="props">
-          <CustomEdge v-bind="props" :flow="version" :flow-data="data" />
+          <CustomEdge v-bind="props" :flow="version" :flow-data="_data" />
         </template>
       </VueFlow>
-
-      <div class="ui-flow-toolbar absolute top-6 right-5 z-50">
-        <u-button v-if="!data" :loading="saving" @click="save()">
-          save
-        </u-button>
-      </div>
     </div>
   </div>
 </template>
