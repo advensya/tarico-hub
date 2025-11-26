@@ -1,6 +1,228 @@
-import type { Edge, Node } from "@vue-flow/core";
+import type { Flow, OneFlow } from "./interface/index.ts";
 
-const flow: { nodes: Node[]; edges: Edge[] } = {
+const flow: Flow = {
+  id: "null",
+  createdAt: new Date(),
+  data: [
+    {
+      version: 0,
+      createdAt: new Date(),
+
+      nodes: [
+        {
+          id: "start",
+          type: "custom",
+          position: {
+            x: -49.938014189641805,
+            y: -275.0658634068768,
+          },
+          data: {
+            state: "draft",
+            label: "Drafting",
+            type: "initial",
+          },
+          deletable: false,
+        },
+        {
+          id: "2",
+          type: "custom",
+          position: {
+            x: 367.9768210247192,
+            y: -65.01188649172659,
+          },
+          data: {
+            state: "pending",
+            label: "En cours de traitement",
+            type: "standard",
+          },
+        },
+        {
+          id: "end",
+          type: "custom",
+          position: {
+            x: 864.9084345110402,
+            y: -280.2799120769189,
+          },
+          data: {
+            state: "cancel",
+            label: "Annulé",
+            type: "final",
+          },
+        },
+        {
+          id: "1763611256150",
+          type: "custom",
+          position: {
+            x: 1514.3841545728492,
+            y: 40.63447711922485,
+          },
+          data: {
+            state: "close",
+            label: "Terminé",
+            type: "final",
+          },
+        },
+        {
+          id: "1763670118503",
+          type: "custom",
+          position: {
+            x: 861.5458307430561,
+            y: -45.56675300104011,
+          },
+          data: {
+            state: "processed",
+            label: "Traité",
+            type: "standard",
+          },
+        },
+        {
+          id: "1763670128447",
+          type: "custom",
+          position: {
+            x: 1228.3424121537896,
+            y: -202.39413583205965,
+          },
+          data: {
+            state: "rejected",
+            label: "Rejeté",
+            type: "standard",
+          },
+        },
+        {
+          id: "1763670176267",
+          type: "custom",
+          position: {
+            x: 1210.5524232979924,
+            y: 41.857259452464845,
+          },
+          data: {
+            state: "approved",
+            label: "Approuvé",
+            type: "standard",
+          },
+        },
+        {
+          id: "1763671206212",
+          type: "custom",
+          position: {
+            x: 1511.9678929779275,
+            y: -210.89553636317177,
+          },
+          data: {
+            state: "cancel",
+            label: "Annulé",
+            type: "final",
+          },
+        },
+      ],
+      edges: [
+        {
+          id: "vueflow__edge-startstart-handle-right-4-22-handle-left-3",
+          type: "default",
+          source: "start",
+          target: "2",
+          sourceHandle: "start-handle-right-4",
+          targetHandle: "2-handle-left-3",
+          data: {},
+          label: "",
+          animated: true,
+        },
+        {
+          id: "vueflow__edge-17636701185031763670118503-handle-right-2-17636701284471763670128447-handle-left-4",
+          type: "default",
+          source: "1763670118503",
+          target: "1763670128447",
+          sourceHandle: "1763670118503-handle-right-2",
+          targetHandle: "1763670128447-handle-left-4",
+          data: {},
+          label: "",
+          animated: true,
+        },
+        {
+          id: "vueflow__edge-17636701185031763670118503-handle-right-4-17636701762671763670176267-handle-left-3",
+          type: "default",
+          source: "1763670118503",
+          target: "1763670176267",
+          sourceHandle: "1763670118503-handle-right-4",
+          targetHandle: "1763670176267-handle-left-3",
+          data: {},
+          label: "",
+          animated: true,
+        },
+        {
+          id: "vueflow__edge-17636701762671763670176267-handle-right-3-17636112561501763611256150-handle-left-3",
+          type: "default",
+          source: "1763670176267",
+          target: "1763611256150",
+          sourceHandle: "1763670176267-handle-right-3",
+          targetHandle: "1763611256150-handle-left-3",
+          data: {},
+          label: "",
+          animated: true,
+        },
+        {
+          id: "vueflow__edge-17636701284471763670128447-handle-right-2-17636712062121763671206212-handle-left-3",
+          type: "default",
+          source: "1763670128447",
+          target: "1763671206212",
+          sourceHandle: "1763670128447-handle-right-2",
+          targetHandle: "1763671206212-handle-left-3",
+          data: {},
+          label: "",
+          animated: true,
+        },
+        {
+          id: "vueflow__edge-22-handle-right-1-endend-handle-left-4",
+          type: "default",
+          source: "2",
+          target: "end",
+          sourceHandle: "2-handle-right-1",
+          targetHandle: "end-handle-left-4",
+          data: {},
+          label: "",
+          animated: true,
+        },
+        {
+          id: "vueflow__edge-17636701284471763670128447-handle-left-2-22-handle-right-3",
+          type: "default",
+          source: "1763670128447",
+          target: "2",
+          sourceHandle: "1763670128447-handle-left-2",
+          targetHandle: "2-handle-right-3",
+          data: {},
+          label: "",
+          animated: true,
+        },
+        {
+          id: "vueflow__edge-22-handle-right-5-17636701185031763670118503-handle-left-3",
+          type: "default",
+          source: "2",
+          target: "1763670118503",
+          sourceHandle: "2-handle-right-5",
+          targetHandle: "1763670118503-handle-left-3",
+          data: {},
+          label: "",
+          animated: true,
+        },
+        {
+          id: "vueflow__edge-startstart-handle-right-2-endend-handle-left-2",
+          type: "default",
+          source: "start",
+          target: "end",
+          sourceHandle: "start-handle-right-2",
+          targetHandle: "end-handle-left-2",
+          data: {},
+          label: "",
+          animated: true,
+        },
+      ],
+    },
+  ],
+};
+
+export const oneFlow: OneFlow = {
+  version: 0,
+  createdAt: new Date(),
   nodes: [
     {
       id: "start",

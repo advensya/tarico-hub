@@ -7,9 +7,9 @@ import {
   getBezierPath,
   useVueFlow,
 } from "@vue-flow/core";
-import type { Flow, FlowData } from "./interface";
+import type { OneFlow, FlowData } from "./interface";
 
-const props = defineProps<EdgeProps & { flow: Flow; flowData?: FlowData }>();
+const props = defineProps<EdgeProps & { flow: OneFlow; flowData?: FlowData }>();
 
 const { removeEdges } = useVueFlow();
 

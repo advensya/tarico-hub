@@ -22,6 +22,7 @@ import UiNodeClose from "~/components/flow/node/close.vue";
 import CustomEdge from "~/components/flow/edge.vue";
 import {
   type Flow,
+  type OneFlow,
   type FlowData,
   type IFlowConnecting,
   type IFlowState,
@@ -29,10 +30,12 @@ import {
 } from "./interface/index";
 
 import { WorkflowParser } from "./utils/parser";
+import { oneFlow } from "./default";
+import { getLatestVersion } from "~/tools/flow";
 
 const props = defineProps({
   data: { type: Object as PropType<FlowData> },
-  flow: { type: Object as PropType<Flow>, required: true },
+  flow: { type: Object as PropType<Flow> },
 });
 
 const {
@@ -47,7 +50,10 @@ const {
   zoomIn,
   zoomOut,
 } = useVueFlow();
-const _flow = ref<Flow>(_.cloneDeep(props.flow));
+
+const _flow = ref<Flow | undefined>(_.cloneDeep(props.flow));
+const version = ref<OneFlow>(getLatestVersion(props.flow) || oneFlow);
+
 const connecting = ref<IFlowConnecting>();
 const inited = ref(false);
 
@@ -141,12 +147,32 @@ function onConnectEnd() {
   connecting.value = undefined;
 }
 
-// NestJS Service / Parser
-function parseVueFlow(flowData: FlowExportObject) {
-  console.log(flowData);
+const saving = ref(false);
+async function save() {
+  // const parser = new WorkflowParser();
+  saving.value = true;
+  try {
+    const newVersion = _.cloneDeep(version.value);
+    newVersion.version++;
+    newVersion.createdAt = new Date();
 
-  const parser = new WorkflowParser();
-  console.log(parser.parseVueFlow(flowData));
+    let body = { data: [newVersion] };
+    if (_flow.value) {
+      const flow = _.cloneDeep(_flow.value);
+      flow.data.push(newVersion);
+      body = flow;
+    }
+
+    const r = await $fetch("/api/flow/create", {
+      method: "post",
+      body,
+    });
+
+    _flow.value = r as any;
+  } catch (error) {
+  } finally {
+    saving.value = false;
+  }
 }
 
 function compareFlowData(
@@ -194,11 +220,11 @@ function compareFlowData(
 </script>
 
 <template>
-  <div class="w-screen h-screen">
+  <div class="w-full h-full">
     <div class="flex h-full">
       <VueFlow
-        v-model:nodes="_flow.nodes"
-        v-model:edges="_flow.edges"
+        v-model:nodes="version.nodes"
+        v-model:edges="version.edges"
         fit-view-on-init
         :default-zoom="1.5"
         :min-zoom="0.2"
@@ -208,12 +234,45 @@ function compareFlowData(
       >
         <Background :gap="12" />
 
+        <!-- :nodes-draggable="false"
+    :nodes-connectable="false"
+    :elements-selectable="false"
+    :edges-updatable="false"
+    :zoom-on-scroll="false"
+    :zoom-on-pinch="false"
+    :zoom-on-double-click="false"
+    :pan-on-scroll="false"
+    :pan-on-drag="false"
+     -->
+
         <MiniMap />
 
         <div class="absolute bottom-5 left-5 z-50 flex flex-col gap-1">
+          <UDropdownMenu
+            v-if="!data"
+            :items="[
+              [
+                ...flowStates.values().map((e) => ({
+                  label: e,
+                  onSelect: () => {
+                    createNewNode({ state: e });
+                  },
+                })),
+              ],
+            ]"
+          >
+            <u-button
+              color="neutral"
+              variant="soft"
+              class="cursor-pointer"
+              icon="i-lucide-git-branch-plus"
+            >
+            </u-button>
+          </UDropdownMenu>
+
           <ui-undo-redo
-            v-if="inited"
-            v-model="_flow"
+            v-if="inited && !data"
+            v-model="version"
             :compare="compareFlowData"
           >
             <template #default="{ canUndo, canRedo, undo, redo }">
@@ -297,36 +356,20 @@ function compareFlowData(
             "
             :is-valid-connection="isHandleAcceptConnection"
             :connecting
-            :flow="_flow"
+            :flow="version"
             :flow-data="data"
           />
         </template>
 
         <template #edge-default="props">
-          <CustomEdge v-bind="props" :flow="_flow" :flow-data="data" />
+          <CustomEdge v-bind="props" :flow="version" :flow-data="data" />
         </template>
       </VueFlow>
 
-      <div class="ui-flow-toolbar absolute top-3 left-5 z-50">
-        <u-button @click="parseVueFlow(toObject())" class="btn-add">
+      <div class="ui-flow-toolbar absolute top-6 right-5 z-50">
+        <u-button v-if="!data" :loading="saving" @click="save()">
           save
         </u-button>
-
-        <UDropdownMenu
-          :items="[
-            [
-              ...flowStates.values().map((e) => ({
-                label: e,
-                onSelect: () => {
-                  createNewNode({ state: e });
-                },
-              })),
-            ],
-          ]"
-          :content="{ align: 'start', collisionPadding: 12 }"
-        >
-          <u-button> <span class="icon">+</span> Ajouter une étape </u-button>
-        </UDropdownMenu>
       </div>
     </div>
   </div>

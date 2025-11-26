@@ -1,0 +1,1 @@
+ALTER TABLE "flow" ADD COLUMN "name" varchar DEFAULT 'workflow' NOT NULL;

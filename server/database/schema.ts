@@ -1,3 +1,4 @@
+import { OneFlow } from "../../app/components/flow/interface/index";
 import {
   pgTable,
   uuid,
@@ -5,6 +6,7 @@ import {
   timestamp,
   boolean,
   text,
+  jsonb,
 } from "drizzle-orm/pg-core";
 
 export const company = pgTable("company", {
@@ -36,5 +38,13 @@ export const auth = pgTable("auth", {
   userId: uuid("userId").references(() => user.id),
 });
 
+export const flow = pgTable("flow", {
+  id: uuid().primaryKey().defaultRandom(),
+  name: varchar().notNull(),
+  data: jsonb().$type<OneFlow[]>().notNull(),
+  createdAt: timestamp().defaultNow().notNull(),
+});
+
 export type User = typeof tables.user.$inferSelect;
 export type Company = typeof tables.company.$inferSelect;
+export type Flow = typeof tables.flow.$inferSelect;

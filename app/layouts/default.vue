@@ -1,22 +1,7 @@
 <script setup>
 import { getLangItems } from "~/tools/lang";
 import { getThemeItems } from "~/tools/theme";
-
-// useHead({
-//   titleTemplate: (title) => {
-//     const e = [];
-//     const { $i18n } = useNuxtApp();
-
-//     if ($i18n.te("site.name")) e.push($i18n.t("site.name"));
-//     else e.push("TARCIO");
-
-//     if ($i18n.te("site.description")) e.push($i18n.t("site.description"));
-
-//     if (title) e.unshift(title);
-
-//     return e.join(" · ");
-//   },
-// });
+import ULayout from "~/components/layout.vue";
 
 const route = useRoute();
 const head = useLocaleHead({
@@ -28,25 +13,15 @@ const head = useLocaleHead({
 
 <template>
   <Html :lang="head.htmlAttrs.lang" :dir="head.htmlAttrs.dir">
-    <Head>
-      <Title>{{ route.meta.title }}</Title>
-      <template v-for="link in head.link" :key="link.id">
-        <Link
-          :id="link.id"
-          :rel="link.rel"
-          :href="link.href"
-          :hreflang="link.hreflang"
-        />
-      </template>
-      <template v-for="meta in head.meta" :key="meta.id">
-        <Meta :id="meta.id" :property="meta.property" :content="meta.content" />
-      </template>
-
-      <slot name="header" />
-    </Head>
-
     <Body>
-      <UApp>
+      <u-layout>
+        <template #header>
+          <slot name="header" />
+        </template>
+
+        <slot />
+      </u-layout>
+      <!-- <UApp>
         <UMain>
           <slot />
         </UMain>
@@ -84,7 +59,7 @@ const head = useLocaleHead({
             </template>
           </UDropdownMenu>
         </div>
-      </UApp>
+      </UApp> -->
     </Body>
   </Html>
 </template>

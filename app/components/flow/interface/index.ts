@@ -24,10 +24,23 @@ export type IFlowState = (typeof flowStates)[number];
 
 export interface FlowData {
   state: string;
+  version: number;
   [key: string]: any;
 }
 
-export type Flow = { nodes: Node[]; edges: Edge[] };
+export type OneFlow = {
+  version: number;
+  nodes: Node[];
+  edges: Edge[];
+  createdAt: Date;
+};
+
+export type Flow = {
+  id: string;
+  name: string;
+  data: OneFlow[];
+  createdAt: Date;
+};
 
 export interface IFlowNodeProps {
   data: {
@@ -41,6 +54,6 @@ export interface IFlowNodeProps {
   id: string;
   selected?: boolean;
   label?: string;
-  flow: Flow;
+  flow: OneFlow;
   flowData?: FlowData;
 }

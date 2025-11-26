@@ -1,5 +1,5 @@
 import type { StateDefinition } from "../interface/workflow.ts";
-import type { Flow } from "../interface/index.ts";
+import type { OneFlow } from "../interface/index.ts";
 
 export class WorkflowParser {
   /**
@@ -18,7 +18,7 @@ export class WorkflowParser {
   /**
    * Convertit le JSON de Vue Flow en une définition de workflow exécutable.
    */
-  public parseVueFlow(flowData: Flow) {
+  public parseVueFlow(flowData: OneFlow) {
     const states: Record<string, StateDefinition> = {};
     const nodeMap = new Map(flowData.nodes.map((node) => [node.id, node]));
 
